@@ -60,11 +60,12 @@ def format_data(boxes, classes, scores, category_index, max_boxes_to_draw = 20, 
   result = []
   for i in range(min(max_boxes_to_draw, boxes.shape[0])):
     if scores is None or scores[i] > min_score_thresh:
+      box = tuple(boxes[i].tolist())
       if classes[i] in category_index.keys():
         class_name = category_index[classes[i]]['name']
       else:
         class_name = 'N/A'
-      pred = {'name': class_name, 'score': round(scores[i], 4)}
+      pred = {'name': class_name, 'score': round(scores[i], 4), 'box': box}
       result.append(pred)
   return result
 
