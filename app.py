@@ -18,6 +18,7 @@ app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 
 CWD_PATH = os.getcwd()
+detection_graph = tf.Graph()
 
 # Path to frozen detection graph. This is the actual model that is used for the object detection.
 MODEL_NAME = 'ssd_mobilenet_v1_coco_11_06_2017'
@@ -45,6 +46,7 @@ def detect_objects(image_np, sess, detection_graph):
     (boxes, scores, classes, num_detections) = sess.run(
         [boxes, scores, classes, num_detections],
         feed_dict={image_tensor: image_np_expanded})
+    sess.close()
     # Visualization of the results of a detection.
     # vis_util.visualize_boxes_and_labels_on_image_array(
     #     image_np,
@@ -69,12 +71,7 @@ def format_data(boxes, classes, scores, category_index, max_boxes_to_draw = 20, 
       result.append(pred)
   return result
 
-@app.route('/api/detect', methods=['POST'])
-def detect():
-    base64_image = request.form['image']
-    encoded_data = base64_image.split(',')[1]
-    nparr = np.fromstring(encoded_data.decode('base64'), np.uint8)
-    detection_graph = tf.Graph()
+def load_model():
     with detection_graph.as_default():
         od_graph_def = tf.GraphDef()
         with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
@@ -82,17 +79,25 @@ def detect():
             od_graph_def.ParseFromString(serialized_graph)
             tf.import_graph_def(od_graph_def, name='')
 
-        sess = tf.Session(graph=detection_graph)
-        # frame_rgb = cv2.imread(os.path.expanduser('/Users/zhengguorong/Desktop/IMG_3367.JPG'))
-        frame_rgb = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        # frame_rgb = cv2.cvtColor(frame_rgb, cv2.COLOR_BGR2RGB)
-        image, boxes, classes, scores, category_index = detect_objects(frame_rgb, sess, detection_graph)
-        response = format_data(boxes, classes, scores, category_index)
-        return jsonify(response)
+
+@app.route('/api/detect', methods=['POST'])
+def detect():
+    base64_image = request.form['image']
+    encoded_data = base64_image.split(',')[1]
+    nparr = np.fromstring(encoded_data.decode('base64'), np.uint8)
+    sess = tf.Session(graph=detection_graph)
+    # frame_rgb = cv2.imread(os.path.expanduser('/Users/zhengguorong/Desktop/IMG_3367.JPG'))
+    frame_rgb = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    # frame_rgb = cv2.cvtColor(frame_rgb, cv2.COLOR_BGR2RGB)
+    image, boxes, classes, scores, category_index = detect_objects(frame_rgb, sess, detection_graph)
+    response = format_data(boxes, classes, scores, category_index)
+    return jsonify(response)
 
 @app.route('/')
 def index():
   return render_template('index.html')
 
 if __name__ == '__main__':
+    load_model()
     app.run(debug=True)
+    
