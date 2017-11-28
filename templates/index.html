@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>图像识别</title>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script>
+    base64Img = ''
+    isChecking = false
+    function readFile() {
+      var file = this.files[0];
+      //判断是否是图片类型
+      if (!/image\/\w+/.test(file.type)) {
+        alert("只能选择图片");
+        return false;
+      }
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = function (e) { txshow.src = this.result; base64Img = this.result }
+    }
+    window.onload = function () {
+      var input = document.getElementById("fielinput");
+      var txshow = document.getElementById("txshow");
+      if (typeof (FileReader) === 'undefined') {
+        result.innerHTML = "抱歉，你的浏览器不支持 FileReader，请使用现代浏览器操作！";
+        input.setAttribute('disabled', 'disabled');
+      } else {
+        input.addEventListener('change', readFile, false);
+        txshow.onclick = function () { input.click(); }
+      }
+    }
+    function submit() {
+      if (!base64Img) {
+        alert('请先选择图片')
+      } else {
+        this.isChecking = true
+        // 禁用提交按钮
+        $('#submit').attr('disabled',true); 
+        $('#submit').text('识别中')
+        $.post('/api/detect', { image: base64Img }, function (result) {
+          $('#submit').attr('disabled',false); 
+          $('#submit').text('提交识别')
+          this.isChecking = false
+          if (result.length) {
+            document.getElementById("json").innerHTML = JSON.stringify(result)
+          } else {
+            document.getElementById("json").innerHTML = '没有识别出任何东西'
+          }
+        })
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <p>选择需要识别的图片：
+    <input type="file" id="fielinput">
+  </p>
+  <img id="txshow" src="" alt="" width="200">
+  <button id="submit" onclick="submit()">提交识别</button>
+  <p>识别结果：</p>
+  <p id="json"></p>
+</body>
+
+</html>
