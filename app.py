@@ -23,8 +23,8 @@ detection_graph = tf.Graph()
 
 # Path to frozen detection graph. This is the actual model that is used for the object detection.
 MODEL_NAME = 'ssd_mobilenet_v1_coco_11_06_2017'
-PB_NAME = 'frozen_inference_graph.pb'
-PB_TEXT = 'mscoco_label_map.pbtxt'
+PB_NAME = 'bluemoon_inference_graph.pb'
+PB_TEXT = 'bluemoon_label_map.pbtxt'
 PATH_TO_CKPT = os.path.join(CWD_PATH, 'object_detection', MODEL_NAME, PB_NAME)
 # List of the strings that is used to add correct label for each box.
 PATH_TO_LABELS = os.path.join(CWD_PATH, 'object_detection', 'data', PB_TEXT)

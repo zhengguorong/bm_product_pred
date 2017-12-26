@@ -1,4 +1,28 @@
 item {
   id: 1
-  name: '手洗专用'
+  name: 'shouxi'
+}
+item {
+  id: 2
+  name: 'zhizun_blue'
+}
+item {
+  id: 3
+  name: 'zhizun_blue_box'
+}
+item {
+  id: 4
+  name: 'zhizun_blue_bag'
+}
+item {
+  id: 5
+  name: 'zhizun_white_box'
+}
+item {
+  id: 6
+  name: 'zhizun_white_bag'
+}
+item {
+  id: 7
+  name: 'zhizun_white'
 }
