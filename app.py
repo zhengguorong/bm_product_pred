@@ -8,6 +8,7 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import json
+import label_image
 
 from flask import Flask, request, render_template, jsonify
 from object_detection.utils import label_map_util
@@ -23,7 +24,7 @@ detection_graph = tf.Graph()
 
 # Path to frozen detection graph. This is the actual model that is used for the object detection.
 MODEL_NAME = 'ssd_mobilenet_v1_coco_11_06_2017'
-PB_NAME = 'bluemoon_inference_graph.pb'
+PB_NAME = 'bluemoon2_inference_graph.pb'
 PB_TEXT = 'bluemoon_label_map.pbtxt'
 PATH_TO_CKPT = os.path.join(CWD_PATH, 'object_detection', MODEL_NAME, PB_NAME)
 # List of the strings that is used to add correct label for each box.
@@ -87,16 +88,29 @@ def detect():
     encoded_data = base64_image.split(',')[1]
     nparr = np.fromstring(encoded_data.decode('base64'), np.uint8)
     sess = tf.Session(graph=detection_graph)
-    # frame_rgb = cv2.imread(os.path.expanduser('/Users/zhengguorong/Desktop/IMG_3367.JPG'))
     frame_rgb = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    # frame_rgb = cv2.cvtColor(frame_rgb, cv2.COLOR_BGR2RGB)
+    frame_rgb = cv2.cvtColor(frame_rgb, cv2.COLOR_BGR2RGB)
     image, boxes, classes, scores, category_index = detect_objects(frame_rgb, sess, detection_graph)
     response = format_data(boxes, classes, scores, category_index)
     return jsonify(response)
 
+@app.route('/api/classify', methods=['POST'])
+def classify():
+    base64_image = request.form['image']
+    encoded_data = base64_image.split(',')[1]
+    nparr = np.fromstring(encoded_data.decode('base64'), np.uint8)
+    frame_rgb = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    frame_rgb = cv2.cvtColor(frame_rgb, cv2.COLOR_BGR2RGB)
+    result = label_image.pred(frame_rgb)
+    return jsonify(result)
+
 @app.route('/')
 def index():
   return render_template('index.html')
+
+@app.route('/detect')
+def object_detect():
+  return render_template('detect.html')
 
 if __name__ == '__main__':
     load_model()
