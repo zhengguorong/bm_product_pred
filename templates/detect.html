@@ -100,7 +100,7 @@
       // var reader = new FileReader();
       // reader.readAsDataURL(file);
       // reader.onload = function (e) { txshow.src = this.result; base64Img = this.result }
-      lrz(file)
+      lrz(file, {width: 800})
         .then(function (rst) {
             // 处理成功会执行
             console.log(rst);
@@ -123,7 +123,6 @@
         input.setAttribute('disabled', 'disabled');
       } else {
         input.addEventListener('change', readFile, false);
-        txshow.onclick = function () { input.click(); }
       }
     }
     function submit() {
@@ -175,7 +174,9 @@
     <a href="javascript:;" class="file">拍照/选择照片
       <input type="file" name="" id="fielinput" accept="image/*">
     </a>
-    <img style="width:100%" id="txshow">
+    <div style="max-height:430px;overflow: scroll;">
+        <img style="width:100%" id="txshow">
+    </div>
   </div>
   <button id="submit" onclick="submit()">提交识别</button>
 </body>

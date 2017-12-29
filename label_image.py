@@ -68,22 +68,34 @@ def load_labels(label_file):
     label.append(l.rstrip())
   return label
 
-def pred(np_image):
-  # file_name = "/Users/zhengguorong/project/tensorflow/myModel/tensorflow-for-poets-2/tf_files/WechatIMG50.jpeg"
-  model_file = "model/retrained_graph.pb"
-  label_file = "model/retrained_labels.txt"
-  input_height = 299
-  input_width = 299
-  input_mean = 0
-  input_std = 255
-  input_layer = "Mul"
-  output_layer = "final_result"
+# type is eumu product/color
+def pred(np_image, classType='product'):
+  if classType == 'product':
+    model_file = "model/retrained_graph.pb"
+    label_file = "model/retrained_labels.txt"
+    input_height = 299
+    input_width = 299
+    input_mean = 0
+    input_std = 255
+    input_layer = "Mul"
+    output_layer = "final_result"
+  elif classType == 'color':
+    model_file = "model/color_graph.pb"
+    label_file = "model/color_labels.txt"
+    input_height = 224
+    input_width = 224
+    input_mean = 128
+    input_std = 128
+    input_layer = "input"
+    output_layer = "final_result"
+
   graph = load_graph(model_file)
   t = read_tensor_from_image_file(np_image,
                                   input_height=input_height,
                                   input_width=input_width,
                                   input_mean=input_mean,
                                   input_std=input_std)
+                                  
   input_name = "import/" + input_layer
   output_name = "import/" + output_layer
   input_operation = graph.get_operation_by_name(input_name);
@@ -97,7 +109,7 @@ def pred(np_image):
 
   top_k = results.argsort()[-5:][::-1]
   labels = load_labels(label_file)
-  # print('\nEvaluation time (1-image): {:.3f}s\n'.format(end-start))
+  print('\nEvaluation time (1-image): {:.3f}s\n'.format(end-start))
   top_pred = []
   for i in top_k:
     top_pred.append({'id': labels[i], 'score': round(results[i], 3)})

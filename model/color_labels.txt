@@ -1,0 +1,8 @@
+black
+blue
+brown
+gray
+lattice
+pattern
+red
+white
