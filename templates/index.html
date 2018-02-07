@@ -80,45 +80,22 @@
   </script>
   <script>
     tpye_label_names = {
-      "1": "衬衫男",
-      "2": "衬衫女",
-      "3": "毛衣男",
-      "4": "毛衣女",
-      "5": "羽绒服男",
-      "6": "羽绒服女",
-      "7": "连衣裙",
-      "8": "风衣男",
-      "9": "风衣女",
-      "10": "牛仔裤",
-      "11": "皮衣男",
-      "12": "皮衣女",
-      "13": "牛仔外套",
-      "14": "婚纱",
-      "15": "短裤男",
-      "16": "短裤女",
-      "17": "夹克",
-      "18": "马甲",
-      "19": "西服男",
-      "20": "西服女",
-      "21": "西裤",
-      "22": "运动裤",
-      "23": "POLO衫",
-      "24": "呢大衣",
-      "25": "棉衣男",
-      "26": "棉衣女",
-      "27": "卫衣",
-      "28": "皮草",
-      "29": "阔脚裤",
+      "1": "衬衫",
+      "2": "t恤/POLP",
+      "3": "羽绒服",
+      "4": "其他"
     }
     color_label_names = {
-      "black": "黑色",
-      "blue": "蓝色",
       "red": "红色",
-      "white": "白色",
-      "gray": "灰色",
-      "brown": "棕色",
+      "yellow": "黄色",
+      "blue": "蓝色",
+      "other": "其他"
+    },
+    style_label_names = {
+      "single": "纯色",
+      "stripe": "条纹",
       "lattice": "格子",
-      "pattern": "花纹",
+      "other": "其他"
     }
 
     isChecking = false
@@ -191,6 +168,17 @@
           } else {
             document.getElementById("product_color").innerHTML = '没有识别出任何东西'
           }
+          if (result['style'].length) {
+            var displayString = ''
+            for (var i=0;i<3;i++) {
+              style_id = result['style'][i].id
+              style_label_name = style_label_names[style_id]
+              displayString += '<div style="margin-bottom: 20px">' + (result['style'][i].score * 100).toFixed(2) + '%  ' + style_label_name + '</div>'
+            }
+            document.getElementById("product_style").innerHTML = displayString
+          } else {
+            document.getElementById("product_style").innerHTML = '没有识别出任何东西'
+          }
         }, 'json')
       }
     }
@@ -214,6 +202,10 @@
       <div style="clear: both">
         <div style="float: left">颜色识别结果：</div>
         <div style="float: left" id='product_color'></div>
+      </div>
+      <div style="clear: both">
+        <div style="float: left">类型识别结果：</div>
+        <div style="float: left" id='product_style'></div>
       </div>
     </div>
   </div>

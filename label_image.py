@@ -69,19 +69,28 @@ def load_labels(label_file):
   return label
 
 # type is eumu product/color
-def pred(np_image, classType='product'):
-  if classType == 'product':
-    model_file = "model/retrained_graph.pb"
-    label_file = "model/retrained_labels.txt"
-    input_height = 299
-    input_width = 299
-    input_mean = 0
-    input_std = 255
-    input_layer = "Mul"
+def pred(np_image, classType='type'):
+  if classType == 'type':
+    model_file = "model/type_graph.pb"
+    label_file = "model/type_labels.txt"
+    input_height = 224
+    input_width = 224
+    input_mean = 128
+    input_std = 128
+    input_layer = "input"
     output_layer = "final_result"
   elif classType == 'color':
     model_file = "model/color_graph.pb"
     label_file = "model/color_labels.txt"
+    input_height = 224
+    input_width = 224
+    input_mean = 128
+    input_std = 128
+    input_layer = "input"
+    output_layer = "final_result"
+  elif classType == 'style':
+    model_file = "model/style_graph.pb"
+    label_file = "model/style_labels.txt"
     input_height = 224
     input_width = 224
     input_mean = 128

@@ -1,8 +1,4 @@
-black
 blue
-brown
-gray
-lattice
-pattern
+other
 red
-white
+yellow

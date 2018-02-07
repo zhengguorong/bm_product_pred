@@ -101,9 +101,10 @@ def classify():
     nparr = np.fromstring(encoded_data.decode('base64'), np.uint8)
     frame_rgb = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     frame_rgb = cv2.cvtColor(frame_rgb, cv2.COLOR_BGR2RGB)
-    classify_product = label_image.pred(frame_rgb)
+    classify_type = label_image.pred(frame_rgb, 'type')
     classify_color = label_image.pred(frame_rgb, 'color')
-    result = {'type': classify_product, 'color': classify_color}
+    classify_style = label_image.pred(frame_rgb, 'style')
+    result = {'type': classify_type, 'color': classify_color, 'style': classify_style}
     return jsonify(result)
 
 @app.route('/')
